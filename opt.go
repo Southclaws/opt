@@ -36,6 +36,14 @@ func NewMap[T, R any](v T, fn func(T) R) Optional[R] {
 	return New(fn(v))
 }
 
+// NewSafe works with common "safe" APIs that return (T, boolean)
+func NewSafe[T any](value T, ok bool) Optional[T] {
+	if ok {
+		return Optional[T]{value}
+	}
+	return nil
+}
+
 // NewIf wraps `v` if `fn` returns true. Useful for sanitisation of input such
 // as trimming spaces and treating empty strings as none.
 func NewIf[T any](v T, fn func(T) bool) Optional[T] {
