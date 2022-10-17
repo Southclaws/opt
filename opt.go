@@ -165,6 +165,15 @@ func (o Optional[T]) OrZero() (value T) {
 	return o[0]
 }
 
+// OrNil returns a pointer to the `T` value if present, or nil if not.
+func (o Optional[T]) OrNil() (value *T) {
+	if o == nil {
+		return nil
+	}
+
+	return &o[0]
+}
+
 // -
 // Utilities
 // -
