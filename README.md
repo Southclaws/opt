@@ -1,5 +1,7 @@
 # opt
 
+![documentation](https://pkg.go.dev/badge/github.com/Southclaws/opt)
+
 Optional types and utilities.
 
 _Inspired by [go-optional by Leigh McCulloch](https://github.com/leighmcculloch/go-optional)_
