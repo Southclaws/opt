@@ -98,32 +98,20 @@ func (o Optional[T]) Get() (value T, ok bool) {
 	return o[0], true
 }
 
+// GetMap returns the wrapped value if it's present and applies `fn`.
+func GetMap[In, Out any](in Optional[In], fn func(In) Out) (v Out, ok bool) {
+	if in == nil {
+		return
+	}
+	return fn(in[0]), true
+}
+
 // Ptr turns an optional value into a pointer to that value or nil.
 func (o Optional[T]) Ptr() *T {
 	if o == nil {
 		return nil
 	}
 	return &o[0]
-}
-
-// -
-// Conditional execution
-// -
-
-// If calls the function if there is a value wrapped by this optional.
-func (o Optional[T]) If(f func(value T)) {
-	if o != nil {
-		f(o[0])
-	}
-}
-
-// Map calls `fn` on `in` if it's present and returns the result.
-func Map[In, Out any](in Optional[In], fn func(In) Out) (v Out) {
-	if in == nil {
-		return
-	}
-
-	return fn(in[0])
 }
 
 // PtrMap turns an optional value into a pointer to that value then transforms
@@ -136,15 +124,6 @@ func PtrMap[In any, Out any](o Optional[In], fn func(In) Out) *Out {
 	return nil
 }
 
-// Map calls `fn` on `in` if it's present and returns the result or an error.
-func MapErr[In, Out any](in Optional[In], fn func(In) (Out, error)) (v Out, err error) {
-	if in == nil {
-		return
-	}
-
-	return fn(in[0])
-}
-
 // Or returns the underlying value or `v`.
 func (o Optional[T]) Or(v T) (value T) {
 	if o == nil {
@@ -152,6 +131,13 @@ func (o Optional[T]) Or(v T) (value T) {
 	}
 
 	return o[0]
+}
+
+// Call calls `fn` if there is a value wrapped by this optional.
+func (o Optional[T]) Call(f func(value T)) {
+	if o != nil {
+		f(o[0])
+	}
 }
 
 // OrCall calls `fn` if the optional is empty.
@@ -173,13 +159,31 @@ func (o Optional[T]) OrZero() (value T) {
 	return o[0]
 }
 
-// OrNil returns a pointer to the `T` value if present, or nil if not.
-func (o Optional[T]) OrNil() (value *T) {
-	if o == nil {
-		return nil
+// -
+// Conditional pipelines
+// -
+
+// Map calls `fn` on `in` if it's present and returns the new optional value.
+func Map[In, Out any](in Optional[In], fn func(In) Out) (v Optional[Out]) {
+	if in == nil {
+		return
 	}
 
-	return &o[0]
+	return Optional[Out]{fn(in[0])}
+}
+
+// Map calls `fn` on `in` if it's present and returns the result or an error.
+func MapErr[In, Out any](in Optional[In], fn func(In) (Out, error)) (v Optional[Out], err error) {
+	if in == nil {
+		return
+	}
+
+	out, err := fn(in[0])
+	if err != nil {
+		return nil, err
+	}
+
+	return Optional[Out]{out}, nil
 }
 
 // -

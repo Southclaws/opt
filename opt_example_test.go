@@ -28,7 +28,7 @@ func Example_get() {
 	// 1001
 }
 
-func Example_if() {
+func Example_call() {
 	i := 1001
 	values := []opt.Optional[int]{
 		opt.NewEmpty[int](),
@@ -38,7 +38,7 @@ func Example_if() {
 	}
 
 	for _, v := range values {
-		v.If(func(i int) {
+		v.Call(func(i int) {
 			fmt.Println(i)
 		})
 	}

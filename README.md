@@ -30,12 +30,12 @@ func main() {
 
     // Mapping and transformation
 
-    maybe = opt.Map(maybe, strings.ToUpper) // I EXIST!
-    maybe_not = opt.Map(maybe_not, strings.ToUpper) // no-op
+    maybe = opt.Map(maybe, strings.ToUpper) // Optional["I EXIST!"]
+    maybe_not = opt.Map(maybe_not, strings.ToUpper) // Empty
 
     // Conditional execution
 
-    maybe.OrCall(func() { fmt.Println("It exists!") }) // It exists!
-    maybe_not.OrCall(func() { fmt.Println("It exists?") }) // silence...
+    maybe_not.OrCall(func() { fmt.Println("It's not there!") }) // It's not there!
+    maybe.OrCall(func() { fmt.Println("Are you there?") }) // silence...
 }
 ```
