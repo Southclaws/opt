@@ -1,6 +1,7 @@
 # opt
 
-![documentation](https://pkg.go.dev/badge/github.com/Southclaws/opt)
+[![GoDoc](https://pkg.go.dev/badge/github.com/Southclaws/opt)](https://pkg.go.dev/github.com/Southclaws/opt?tab=doc)
+[![Go Report Card](https://goreportcard.com/badge/github.com/Southclaws/opt)](https://goreportcard.com/report/github.com/Southclaws/opt)
 
 Optional types and utilities.
 
