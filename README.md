@@ -171,6 +171,70 @@ t := maybe.OrCall(func() string {
 // "a default value from somewhere"
 ```
 
+## Curried `C` Functions
+
+Some APIs will have a second version with `C` appended to the name. These are
+curried versions of those functions to aid in ergonomic usage.
+
+Say for example you have a function that converts a number to a GBP currency
+representation. You want to apply this function to a few values in a struct or
+to a slice of items.
+
+```go
+// Given: ConvertUSD(value int) string
+
+func Convert(input Table) PriceBreakdown {
+    return PriceBreakdown{
+        Cost:          ConvertGBP(input.UnitCost),
+        ShippingFee:   NewPtrMap(input.ShippingFee, ConvertGBP),
+        ServiceCharge: NewPtrMap(input.ServiceCharge, ConvertGBP),
+        Discount:      NewPtrMap(input.Discount, ConvertGBP),
+    }
+}
+```
+
+A small example, but you could imagine how much this can get in a larger system.
+
+Using curried APIs, we can make this a little more terse:
+
+```go
+func Convert(input Table) PriceBreakdown {
+    gbp := NewPtrMapC(ConvertGBP)
+    return PriceBreakdown{
+        Cost:          ConvertGBP(input.UnitCost),
+        ShippingFee:   gbp(input.ShippingFee),
+        ServiceCharge: gbp(input.ServiceCharge),
+        Discount:      gbp(input.Discount),
+    }
+}
+```
+
+Now this may not seem like much but it can make refactors easier and keep diffs
+small. Once you start thinking in curried functions, certain tasks get simpler!
+
+Let's see what this looks like for a slice of items:
+
+```go
+func ConvertMany(prices []*int) []Optional[string] {
+    output := []Optional[string]{}
+    for _, v := range prices {
+        output = append(output, NewPtrMap(v, ConvertGBP))
+    }
+    return output
+}
+```
+
+If you like to use functional libraries like [lo](https://github.com/samber/lo)
+and [fp-go](https://github.com/repeale/fp-go) then this might be useful:
+
+```go
+func ConvertMany(prices []*int) []Optional[string] {
+    fn := PtrMapC(ConvertGBP)
+    mapper := fp.Map(fn)
+    return mapper(prices)
+}
+```
+
 ## Construction
 
 There are quite a few places data can come from. opt provides a few helpers to

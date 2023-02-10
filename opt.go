@@ -106,6 +106,13 @@ func GetMap[In, Out any](in Optional[In], fn func(In) Out) (v Out, ok bool) {
 	return fn(in[0]), true
 }
 
+// GetMapC is the curried version of GetMap. See `Map` for an example.
+func GetMapC[In, Out any](fn func(In) Out) func(in Optional[In]) (v Out, ok bool) {
+	return func(in Optional[In]) (v Out, ok bool) {
+		return GetMap(in, fn)
+	}
+}
+
 // Ptr turns an optional value into a pointer to that value or nil.
 func (o Optional[T]) Ptr() *T {
 	if o == nil {
@@ -122,6 +129,13 @@ func PtrMap[In any, Out any](o Optional[In], fn func(In) Out) *Out {
 		return &v
 	}
 	return nil
+}
+
+// PtrMapC is the curried version of PtrMap. See `Map` for an example.
+func PtrMapC[In any, Out any](fn func(In) Out) func(o Optional[In]) *Out {
+	return func(in Optional[In]) *Out {
+		return PtrMap(in, fn)
+	}
 }
 
 // Or returns the underlying value or `v`.
@@ -172,7 +186,24 @@ func Map[In, Out any](in Optional[In], fn func(In) Out) (v Optional[Out]) {
 	return Optional[Out]{fn(in[0])}
 }
 
-// Map calls `fn` on `in` if it's present and returns the result or an error.
+// MapC is the curried version of Map. It's useful for applying the same mapping
+// function to many values either manually or using a functor library.
+//
+// First, construct the function with the transformer.
+//
+//	fn := Map(transformer)
+//
+// Now you can use `fn` to transform any optional value using the transformer.
+//
+//	b := fn(a)
+//	dt.Map(array, fn)
+func MapC[In, Out any](fn func(In) Out) func(in Optional[In]) (v Optional[Out]) {
+	return func(in Optional[In]) (v Optional[Out]) {
+		return Map(in, fn)
+	}
+}
+
+// MapErr calls `fn` on `in` if it's present and returns the result or an error.
 func MapErr[In, Out any](in Optional[In], fn func(In) (Out, error)) (v Optional[Out], err error) {
 	if in == nil {
 		return
@@ -184,6 +215,13 @@ func MapErr[In, Out any](in Optional[In], fn func(In) (Out, error)) (v Optional[
 	}
 
 	return Optional[Out]{out}, nil
+}
+
+// MapErrC calls `fn` on `in` if it's present and returns the result or an error.
+func MapErrC[In, Out any](fn func(In) (Out, error)) func(in Optional[In]) (v Optional[Out], err error) {
+	return func(in Optional[In]) (v Optional[Out], err error) {
+		return MapErr(in, fn)
+	}
 }
 
 // -

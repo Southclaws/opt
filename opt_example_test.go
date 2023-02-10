@@ -3,6 +3,7 @@ package opt_test
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/Southclaws/opt"
@@ -26,6 +27,57 @@ func Example_get() {
 	// Output:
 	// 1000
 	// 1001
+}
+
+func ExampleGetMapC() {
+	a := opt.New("hello")
+	b := opt.New("my name is")
+	c := opt.NewEmpty[string]()
+
+	fn := opt.GetMapC(strings.ToUpper)
+
+	fmt.Println(fn(a))
+	fmt.Println(fn(b))
+	fmt.Println(fn(c))
+
+	// Output:
+	// HELLO true
+	// MY NAME IS true
+	//  false
+}
+
+func ExamplePtrMapC() {
+	a := opt.New("hello")
+	b := opt.New("my name is")
+	c := opt.NewEmpty[string]()
+
+	fn := opt.PtrMapC(strings.ToUpper)
+
+	fmt.Println(*fn(a))
+	fmt.Println(*fn(b))
+	fmt.Println(fn(c))
+
+	// Output:
+	// HELLO
+	// MY NAME IS
+	// <nil>
+}
+
+func ExampleMapC() {
+	a := opt.New("hello")
+	b := opt.New("my name is")
+	c := opt.NewEmpty[string]()
+
+	fn := opt.MapC(strings.ToUpper)
+
+	fmt.Println(fn(a))
+	fmt.Println(fn(b))
+	fmt.Println(fn(c))
+
+	// Output:
+	// HELLO
+	// MY NAME IS
+	//
 }
 
 func Example_call() {
