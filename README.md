@@ -299,7 +299,7 @@ v := opt.NewIf(company.LegalName, func(s string) bool { return s != "" })
 v := opt.NewIf(createdAt, func(t time.Time) bool { return !t.IsZero() })
 ```
 
-### `NewPtr`, `NewPtrMap` and `NewPtrIf`
+### `NewPtr`, `NewPtrMap`, `NewPtrIf` and `NewPtrOr`
 
 If one area of your application is using pointers already but you want to expose
 optionals, you can use this one to easily construct an optional from a pointer.
@@ -312,6 +312,7 @@ type Account struct {
 // ...
 
 v := opt.NewPtr(account.Twitter)
+v := opt.NewPtrOr(account.Twitter, "@southclaws")
 ```
 
 ## Prior Art

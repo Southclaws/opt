@@ -25,6 +25,8 @@ func TestNew(t *testing.T) {
 	a.Equal("", NewIf(v, func(v string) bool { return false }).String())
 	a.Equal("value", NewPtr(&v).String())
 	a.Equal("", NewPtr[string](nil).String())
+	a.Equal("value", NewPtrOr(&v, "fallback").String())
+	a.Equal("fallback", NewPtrOr[string](nil, "fallback").String())
 	a.Equal("VALUE", NewPtrMap(&v, strings.ToUpper).String())
 	a.Equal("", NewPtrMap(nil, strings.ToUpper).String())
 	a.Equal("value", NewPtrIf(&v, func(v string) bool { return true }).String())

@@ -81,6 +81,14 @@ func NewPtrIf[T any](ptr *T, fn func(T) bool) Optional[T] {
 	return New(*ptr)
 }
 
+// NewPtrOr wraps the input if it's non-nil, otherwise returns a fallback value.
+func NewPtrOr[T any](ptr *T, fallback T) Optional[T] {
+	if ptr == nil {
+		return New(fallback)
+	}
+	return New(*ptr)
+}
+
 // -
 // Accessors
 // -
